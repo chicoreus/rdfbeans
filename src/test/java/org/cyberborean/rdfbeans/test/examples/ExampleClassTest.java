@@ -76,7 +76,7 @@ public class ExampleClassTest extends RDFBeansTestBase {
         assertNotNull(p2.getNick());
         assertEquals(john.getNick().length, p2.getNick().length);
         for (int i = 0; i < john.getNick().length; i++) {
-            assertTrue(john.getNick(i).equals(p2.getNick(i)));
+            assertEquals(john.getNick(i), p2.getNick(i));
         }
         assertEquals(john.getKnows().size(), p2.getKnows().size());
         for (Person p: john.getKnows()) {            
@@ -108,14 +108,14 @@ public class ExampleClassTest extends RDFBeansTestBase {
     
     @Test
     public void testGetAll() throws Exception {                
-        CloseableIteration<Person, Exception> iter = manager.getAll(Person.class);
         Set<Person> s = new HashSet<>();
-        while (iter.hasNext()) {
-            Object o = iter.next();
-            assertTrue(o instanceof Person);
-            s.add((Person)o);
+        try (CloseableIteration<Person> iter = manager.getAll(Person.class)) {
+            while (iter.hasNext()) {
+                Person o = iter.next();
+                assertNotNull(o);
+                s.add(o);
+            }
         }
-        iter.close();
         assertEquals(s.size(), 3);
     }
     

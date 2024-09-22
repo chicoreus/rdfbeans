@@ -20,7 +20,7 @@ import org.cyberborean.rdfbeans.reflect.RDFBeanInfo;
 import org.cyberborean.rdfbeans.reflect.RDFProperty;
 import org.cyberborean.rdfbeans.reflect.SubjectProperty;
 import org.cyberborean.rdfbeans.util.LockKeeper;
-import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.common.exception.RDF4JException;
 import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
@@ -89,7 +89,7 @@ public class Unmarshaller {
 			for (RDFProperty p : rbi.getProperties()) {
 				// Get values
 				IRI predicate = p.getUri();
-				CloseableIteration<Statement, ? extends RDF4JException> statements;
+				CloseableIteration<Statement> statements;
 				if (p.isInversionOfProperty()) {
 					statements = conn.getStatements(null, predicate, resource, false, (IRI)context);
 					if (!statements.hasNext()) {
@@ -254,7 +254,7 @@ public class Unmarshaller {
 	private Class<?> getBindingClass(RepositoryConnection conn, Resource r, Resource... contexts)
 			throws RDFBeanException, RepositoryException {
 		Class<?> cls = null;
-		try (CloseableIteration<Statement, RepositoryException> ts = conn.getStatements(r, RDF.TYPE, null, false, contexts)) {
+		try (CloseableIteration<Statement> ts = conn.getStatements(r, RDF.TYPE, null, false, contexts)) {
 			while (cls == null && ts.hasNext()) {
 				Value type = ts.next().getObject();
 				if (type instanceof IRI) {

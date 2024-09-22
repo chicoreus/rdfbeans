@@ -22,7 +22,7 @@ import org.cyberborean.rdfbeans.exceptions.RDFBeanException;
 import org.cyberborean.rdfbeans.exceptions.RDFBeanValidationException;
 import org.cyberborean.rdfbeans.reflect.RDFBeanInfo;
 import org.cyberborean.rdfbeans.reflect.RDFProperty;
-import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.common.exception.RDF4JException;
 import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
@@ -68,7 +68,7 @@ public class RDFBeanDelegator implements InvocationHandler {
 	private IRI context;
 
 	public RDFBeanDelegator(Resource subject, RDFBeanInfo rdfBeanInfo,
-			RDFBeanManagerContext rdfBeanManagerContext) {
+                            RDFBeanManagerContext rdfBeanManagerContext) {
 		this.subject = subject;
 		this.rdfBeanInfo = rdfBeanInfo;
 		this.rdfBeanManagerContext = rdfBeanManagerContext;
@@ -173,7 +173,7 @@ public class RDFBeanDelegator implements InvocationHandler {
 	}
 
 	/**
-	 * @param uri
+	 * @param p
 	 * @return
 	 * @throws RDFBeanException
 	 * @throws RDF4JException
@@ -185,7 +185,7 @@ public class RDFBeanDelegator implements InvocationHandler {
 	private Object getValue(RDFProperty p) throws RDFBeanException, RepositoryException, RDF4JException {
 		RepositoryConnection conn = getRepositoryConnection();
 		Object result = null;
-		CloseableIteration<Statement, ? extends RDF4JException> sts;
+		CloseableIteration<Statement> sts;
 		if (p.isInversionOfProperty()) {
 			sts = conn.getStatements(null, p.getUri(), subject, false, (IRI)context);
 			if (!sts.hasNext()) {
