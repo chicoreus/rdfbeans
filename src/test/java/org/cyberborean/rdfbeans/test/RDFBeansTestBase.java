@@ -18,14 +18,14 @@ public abstract class RDFBeansTestBase {
 	protected Repository repo;
 
 	@Before
-	public void setupManager() throws Exception {
+	public void setupManager() {
 		repo = new SailRepository(new MemoryStore());
-        repo.initialize();   
+        repo.init();
         manager = new RDFBeanManager(repo);
 	}
 	
 	@After
-	public void teardownManager() throws Exception {
+	public void teardownManager() {
 		manager.close();
         repo.shutDown();
 	}

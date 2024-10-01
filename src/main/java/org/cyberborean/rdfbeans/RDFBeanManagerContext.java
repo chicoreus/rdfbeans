@@ -21,7 +21,7 @@ import org.cyberborean.rdfbeans.proxy.ProxyListener;
 import org.cyberborean.rdfbeans.reflect.RDFBeanInfo;
 import org.cyberborean.rdfbeans.reflect.SubjectProperty;
 import org.cyberborean.rdfbeans.util.LockKeeper;
-import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.common.exception.RDF4JException;
 import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
@@ -238,57 +238,57 @@ public class RDFBeanManagerContext {
 	 *             If the class is not a valid RDFBean class
 	 * @throws RepositoryException
 	 */
-	public <T> CloseableIteration<T, Exception> getAll(final Class<T> rdfBeanClass)
+	public <T> CloseableIteration<T> getAll(final Class<T> rdfBeanClass)
 			throws RDFBeanException, RepositoryException {
 		RDFBeanInfo rbi = RDFBeanInfo.get(rdfBeanClass);
 		IRI type = rbi.getRDFType();
 		if (type == null) {
-			return new CloseableIteration<T, Exception>() {
+			return new CloseableIteration<T>() {
 
 				@Override
-				public boolean hasNext() throws Exception {
+				public boolean hasNext() {
 					return false;
 				}
 
 				@Override
-				public T next() throws Exception {
+				public T next() {
 					return null;
 				}
 
 				@Override
-				public void remove() throws Exception {
+				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 
 				@Override
-				public void close() throws Exception {
+				public void close() {
 				}
 
 			};
 		}
 
-		final CloseableIteration<Statement, RepositoryException> sts = connectionPool.getConnection()
+		final CloseableIteration<Statement> sts = connectionPool.getConnection()
 				.getStatements(null, RDF.TYPE, type, false, (IRI)context);
 
-		return new CloseableIteration<T, Exception>() {
+		return new CloseableIteration<T>() {
 
 			@Override
-			public boolean hasNext() throws Exception {
+			public boolean hasNext() {
 				return sts.hasNext();
 			}
 
 			@Override
-			public T next() throws Exception {
+			public T next() {
 				return _get(sts.next().getSubject(), rdfBeanClass);
 			}
 
 			@Override
-			public void remove() throws Exception {
+			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
 			@Override
-			public void close() throws Exception {
+			public void close() {
 				sts.close();
 			}
 		};
@@ -316,7 +316,7 @@ public class RDFBeanManagerContext {
 	 * 
 	 * @param r
 	 *            Resource IRI or BNode
-	 * @param context
+	 * @param rdfBeanClass
 	 *            RDF4J context
 	 * @return true, if the model contains the statements with the given
 	 *         resource subject and RDF type of that resource matches one
@@ -393,7 +393,7 @@ public class RDFBeanManagerContext {
 	 * @return true if the resource existed in the model before deletion, false
 	 *         otherwise
 	 * @throws RepositoryException
-	 * @see delete(String,Class)
+	 * @see #delete(String, Class)
 	 */
 	public boolean delete(Resource uri) throws RepositoryException {
 		if (isResourceExist(uri)) {
@@ -457,7 +457,7 @@ public class RDFBeanManagerContext {
 	 *             If the class is not a valid RDFBean class
 	 * @throws RepositoryException
 	 * 
-	 * @see delete(Resource)
+	 * @see #delete(Resource)
 	 */
 	public void delete(String stringId, Class rdfBeanClass) throws RDFBeanException, RepositoryException {
 		Resource r = this.getResource(stringId, rdfBeanClass);
@@ -512,7 +512,7 @@ public class RDFBeanManagerContext {
 	 *             If iface is not a valid RDFBean interface
 	 * @throws RepositoryException
 	 * 
-	 * @see create(String,Class)
+	 * @see #create(String,Class)
 	 * @param <T>
 	 */
 	public <T> T create(Resource r, Class<T> iface) throws RDFBeanException, RepositoryException {
@@ -542,7 +542,7 @@ public class RDFBeanManagerContext {
 	 *             identifier cannot be resolved to a resource
 	 * @throws RepositoryException
 	 * 
-	 * @see create(Resource,Class)
+	 * @see #create(Resource,Class)
 	 */
 	public <T> T create(String id, Class<T> iface) throws RDFBeanException, RepositoryException {
 		RDFBeanInfo rbi = RDFBeanInfo.get(iface);

@@ -1,9 +1,7 @@
 package org.cyberborean.rdfbeans.datatype;
 
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +15,7 @@ import java.util.List;
 import org.cyberborean.rdfbeans.RDFBeanManager;
 import org.cyberborean.rdfbeans.exceptions.RDFBeanException;
 import org.cyberborean.rdfbeans.test.entities.DatatypeTestClass;
-import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.common.exception.RDF4JException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -40,7 +38,7 @@ public class ListTest {
     @Before
     public void setupManager() throws Exception {
         repo = new SailRepository(new MemoryStore());
-        repo.initialize();
+        repo.init();
         RepositoryConnection initialFillConn = repo.getConnection();
         initialFillConn.add(getClass().getResourceAsStream("listUnmarshal.ttl"), "", RDFFormat.TURTLE);
         initialFillConn.close();
@@ -52,12 +50,12 @@ public class ListTest {
         DatatypeTestClass data =
         manager.get(repo.getValueFactory().createIRI("http://example.com/list/dataClass"), DatatypeTestClass.class);
         assertThat(data, notNullValue());
-        List list = data.getListValue();
+        List<Object> list = data.getListValue();
         assertThat(list, notNullValue());
         assertThat(list.size(), is(3));
-        assertThat(list.get(0), is(URI.class));
-        assertThat((URI) list.get(0), equalTo(new URI("http://example.com/list/first")));
-        assertThat((URI) list.get(list.size()-1), equalTo(new URI("http://example.com/list/last")));
+        assertThat(list.getFirst(), instanceOf(URI.class));
+        assertThat((URI) list.getFirst(), equalTo(new URI("http://example.com/list/first")));
+        assertThat((URI) list.getLast(), equalTo(new URI("http://example.com/list/last")));
     }
 
     @Test
@@ -71,7 +69,7 @@ public class ListTest {
         try {
             assertTrue("A list statement is generated", listStatement.hasNext());
             Value object = listStatement.next().getObject();
-            assertThat(object, is(Resource.class));
+            assertThat(object, instanceOf(Resource.class));
             assertTrue("Empty List encodes as 'L rdf:rest rdf:nil'", checkConn.hasStatement(
                     (Resource)object, // the blank node of the list head
                     RDF.REST,
@@ -89,17 +87,16 @@ public class ListTest {
     @Test
     public void encodeHeadTailList() throws RepositoryException, RDFBeanException, URISyntaxException {
         DatatypeTestClass data = new DatatypeTestClass();
-        List<Object> elements = Arrays.asList((Object)new URI("http://example.com/first"), (Object)new URI("http://example.com/last"));
+        List<Object> elements = Arrays.asList(new URI("http://example.com/first"), new URI("http://example.com/last"));
         data.setHeadTailList(elements);
         Resource marshaled = manager.add(data);
-        RepositoryConnection checkConn = repo.getConnection();
-        try {
+        try (RepositoryConnection checkConn = repo.getConnection()) {
             IRI property = checkConn.getValueFactory().createIRI("http://cyberborean.org/rdfbeans/2.0/test/datatype/headTailList");
             RepositoryResult<Statement> listStatement = checkConn.getStatements(marshaled, property, null, false);
             Resource listHead;
             try {
                 assertTrue("A list statement is generated", listStatement.hasNext());
-                listHead = (Resource)listStatement.next().getObject();
+                listHead = (Resource) listStatement.next().getObject();
                 assertFalse("No further list heads are generated", listStatement.hasNext());
             } finally {
                 listStatement.close();
@@ -107,7 +104,7 @@ public class ListTest {
             assertTrue("First element is encoded as L rdf:first ex:first'", checkConn.hasStatement(
                     listHead,
                     RDF.FIRST,
-                    checkConn.getValueFactory().createIRI(elements.get(0).toString()),
+                    checkConn.getValueFactory().createIRI(elements.getFirst().toString()),
                     false
             ));
             assertFalse("List does not end after first element", checkConn.hasStatement(
@@ -120,7 +117,7 @@ public class ListTest {
             Resource listTail;
             try {
                 assertTrue("A tail statement is generated", tailStatements.hasNext());
-                listTail = (Resource)tailStatements.next().getObject();
+                listTail = (Resource) tailStatements.next().getObject();
                 assertFalse("No further list tails are generated", tailStatements.hasNext());
             } finally {
                 tailStatements.close();
@@ -137,14 +134,12 @@ public class ListTest {
                     RDF.NIL,
                     false
             ));
-        } finally {
-            checkConn.close();
         }
         manager.delete(marshaled);
     }
 
     @After
-    public void teardownManager() throws Exception {
+    public void teardownManager() {
         manager.close();
         repo.shutDown();
     }

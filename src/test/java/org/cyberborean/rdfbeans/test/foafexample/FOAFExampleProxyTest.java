@@ -1,8 +1,11 @@
 package org.cyberborean.rdfbeans.test.foafexample;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,7 +16,6 @@ import org.cyberborean.rdfbeans.test.foafexample.entities.IDocument;
 import org.cyberborean.rdfbeans.test.foafexample.entities.IPerson;
 import org.junit.Before;
 import org.junit.Test;
-import org.eclipse.rdf4j.model.Resource;
 
 /**
  * A synthetic test for cascade proxy databinding and Constants interfaces inheritance
@@ -24,11 +26,9 @@ public class FOAFExampleProxyTest extends RDFBeansTestBase {
     IPerson john;
     IPerson mary;
     IPerson jim;
-    
-    Resource subject;    
-  
+
     @Before
-    public void setUp() throws Exception { 
+    public void setUp() {
     	
         john = manager.create("johndoe", IPerson.class);
         john.setName("John Doe");
@@ -41,26 +41,26 @@ public class FOAFExampleProxyTest extends RDFBeansTestBase {
         String[] nicks = new String[] {"johndoe", "johnnydoe", "JohnnyTheTerrible"};
         john.setNick(nicks);
         
-        IDocument d = manager.create("http://johndoe.example.com", IDocument.class);
+        IDocument d = manager.create("https://johndoe.example.com", IDocument.class);
         d.setName("John's homepage");
         john.setHomepage(d);
         
         mary = manager.create("marysmith", IPerson.class); 
         mary.setName("Mary Smith");
         mary.setMbox("marysmith@example.com");
-        Set<IPerson> maryKnows = new HashSet<IPerson>();        
+        Set<IPerson> maryKnows = new HashSet<>();
         maryKnows.add(john); // recursive link
         mary.setKnows(maryKnows);
         
         jim = manager.create("jimsmith", IPerson.class);
         jim.setName("Jim Smith");
         jim.setMbox("jimsmith@example.com");
-        Set<IPerson> jimKnows = new HashSet<IPerson>();
+        Set<IPerson> jimKnows = new HashSet<>();
         jimKnows.add(mary);
         jimKnows.add(john); // recursive link
         jim.setKnows(jimKnows);
         
-        Set<IPerson> johnKnows = new HashSet<IPerson>();
+        Set<IPerson> johnKnows = new HashSet<>();
         johnKnows.add(mary);
         johnKnows.add(jim);
         john.setKnows(johnKnows);
@@ -78,13 +78,13 @@ public class FOAFExampleProxyTest extends RDFBeansTestBase {
     	assertEquals(c.get(Calendar.DAY_OF_MONTH), 1);    	
     	String[] nicks = john.getNick();
     	assertEquals(nicks.length, 3);
-    	assertTrue(Arrays.equals(nicks, new String[] {"johndoe", "johnnydoe", "JohnnyTheTerrible"}));
+        assertArrayEquals(nicks, new String[]{"johndoe", "johnnydoe", "JohnnyTheTerrible"});
     	for (int i = 0; i < nicks.length; i++) {
     		assertEquals(nicks[i], john.getNick(i));
     	}
     	IDocument d = john.getHomepage();
     	assertNotNull(d);
-    	assertEquals(d.getUri(), "http://johndoe.example.com");
+    	assertEquals(d.getUri(), "https://johndoe.example.com");
     	assertEquals(d.getName(), "John's homepage");
     	Set<IPerson> johnKnows = john.getKnows();
     	assertFalse(johnKnows.isEmpty());
@@ -100,18 +100,18 @@ public class FOAFExampleProxyTest extends RDFBeansTestBase {
     }
     
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
     	assertEquals(john.getName(), "John Doe");
     	john.setName("John Doe II");
     	assertEquals(john.getName(), "John Doe II");
     	// Indexed properties
     	john.setNick(1, "johnnydoeII");
     	assertEquals(john.getNick(1), "johnnydoeII");
-    	assertTrue(Arrays.equals(john.getNick(), new String[] {"johndoe", "johnnydoeII", "JohnnyTheTerrible"}));
+        assertArrayEquals(john.getNick(), new String[]{"johndoe", "johnnydoeII", "JohnnyTheTerrible"});
     }
     
     @Test
-    public void testInversions() throws Exception {
+    public void testInversions() {
     	assertEquals(john.getHomepage().getOwner(), john);
     	
     	Set<IPerson> knowsJohn = john.getKnownBy();
@@ -125,11 +125,11 @@ public class FOAFExampleProxyTest extends RDFBeansTestBase {
     	assertTrue(knowsJim.contains(john));
     	assertFalse(knowsJim.contains(mary));
     	
-    	IDocument p1 = manager.create("http://johndoe.example.com/pub1", IDocument.class);
+    	IDocument p1 = manager.create("https://johndoe.example.com/pub1", IDocument.class);
         p1.setName("Publication #1");
-        IDocument p2 = manager.create("http://johndoe.example.com/pub2", IDocument.class);
+        IDocument p2 = manager.create("https://johndoe.example.com/pub2", IDocument.class);
         //p2.setName("Publication #2"); -- inversions should work without storing an RDFBean in the model 
-        IDocument p3 = manager.create("http://johndoe.example.com/pub3", IDocument.class);
+        IDocument p3 = manager.create("https://johndoe.example.com/pub3", IDocument.class);
         john.setPublications(new IDocument[] {p1, p2, p3});
         assertEquals(p1.getAuthor(), john);
         assertEquals(p2.getAuthor(), john);
@@ -137,7 +137,7 @@ public class FOAFExampleProxyTest extends RDFBeansTestBase {
     }
     
     @Test
-    public void testCreateAll() throws Exception {
+    public void testCreateAll() {
     	Collection<IPerson> all = manager.createAll(IPerson.class);
     	assertEquals(all.size(), 3);
     	for (IPerson p : all) {

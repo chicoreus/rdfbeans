@@ -141,14 +141,14 @@ public class ExampleClassTest extends RDFBeansTestBase {
 		_testGetAll(graph1);
 		_testGetAll(graph2);
 		
-		CloseableIteration<Person, Exception> iter = manager.getContext(graph0).getAll(Person.class);
+		CloseableIteration<Person> iter = manager.getContext(graph0).getAll(Person.class);
 		assertFalse(iter.hasNext());
 		iter.close();
 		
 	}
 	
 	private void _testGetAll(IRI graph) throws Exception {
-		CloseableIteration<Person, Exception> iter = manager.getContext(graph).getAll(Person.class);
+		CloseableIteration<Person> iter = manager.getContext(graph).getAll(Person.class);
 		Set<Person> s = new HashSet<>();
 		while (iter.hasNext()) {
 			Object o = iter.next();
