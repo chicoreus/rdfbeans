@@ -1,5 +1,6 @@
 package org.cyberborean.rdfbeans.test.entities;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ public class DatatypeTestClass {
 	short shortValue;
 	Date dateValue;
 	java.net.URI uriValue;
+	LocalDate localDate;
 	
 	int[] arrayValue;
 	List<Object> listValue;
@@ -185,5 +187,20 @@ public class DatatypeTestClass {
 		this.sortedSetValue = sortedSetValue;
 	}
 	public void setHeadTailList(List<Object> headTailList) { this.headTailList = headTailList; }
+
+	/**
+	 * @return the localDate
+	 */
+	@RDF("http://cyberborean.org/rdfbeans/2.0/test/datatype/localdate")
+	public LocalDate getLocalDate() {
+		return localDate;
+	}
+
+	/**
+	 * @param localDate the localDate to set
+	 */
+	public void setLocalDate(LocalDate localDate) {
+		this.localDate = localDate;
+	}
 
 }

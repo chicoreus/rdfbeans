@@ -3,6 +3,7 @@ package org.cyberborean.rdfbeans.datatype;
 import static org.junit.Assert.*;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ public class DatatypeTest extends RDFBeansTestBase {
     	object.setLongValue(Long.MAX_VALUE);
     	object.setShortValue(Short.MAX_VALUE);
     	object.setDateValue(new Date());
+    	object.setLocalDate(LocalDate.now());
     	object.setUriValue(URI.create("http://rdfbeans.sourceforge.net"));
     	int[] array = new int[] {0, 1, 2, 3, 4};
     	object.setArrayValue(array);
@@ -67,6 +69,7 @@ public class DatatypeTest extends RDFBeansTestBase {
     	assertEquals(object.getLongValue(), object2.getLongValue());
     	assertEquals(object.getShortValue(), object2.getShortValue());
     	assertEquals(object.getDateValue(), object2.getDateValue());
+    	assertEquals(object.getLocalDate(), object2.getLocalDate());
     	assertEquals(object.getUriValue(), object2.getUriValue());
     	assertTrue(Arrays.equals(object.getArrayValue(), object2.getArrayValue()));
     	assertTrue(Arrays.equals(object.getListValue().toArray(), object2.getListValue().toArray()));

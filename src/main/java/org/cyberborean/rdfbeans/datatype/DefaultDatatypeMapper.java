@@ -1,6 +1,7 @@
 package org.cyberborean.rdfbeans.datatype;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.vocabulary.XSD;
 
 
 /**
@@ -34,18 +35,19 @@ public class DefaultDatatypeMapper implements DatatypeMapper {
 	static {
 		
 		// standard XML-Schema datatypes
-		DATATYPE_MAP.put(String.class, XMLSchema.STRING);
-		DATATYPE_MAP.put(Integer.class, XMLSchema.INT);
-		DATATYPE_MAP.put(Date.class, XMLSchema.DATETIME);
-		DATATYPE_MAP.put(Boolean.class, XMLSchema.BOOLEAN);
-		DATATYPE_MAP.put(Float.class, XMLSchema.FLOAT);
-		DATATYPE_MAP.put(Double.class, XMLSchema.DOUBLE);
-		DATATYPE_MAP.put(Byte.class, XMLSchema.BYTE);
-		DATATYPE_MAP.put(Long.class, XMLSchema.LONG);
-		DATATYPE_MAP.put(Short.class, XMLSchema.SHORT);
-		DATATYPE_MAP.put(BigDecimal.class, XMLSchema.DECIMAL);
-		DATATYPE_MAP.put(java.net.URI.class, XMLSchema.ANYURI);
-		DATATYPE_MAP.put(java.time.LocalDate.class, XMLSchema.DATE);
+		DATATYPE_MAP.put(String.class, XSD.STRING);
+		DATATYPE_MAP.put(Integer.class, XSD.INT);
+		DATATYPE_MAP.put(Date.class, XSD.DATETIME);
+		DATATYPE_MAP.put(LocalDate.class, XSD.DATE);
+		DATATYPE_MAP.put(Boolean.class, XSD.BOOLEAN);
+		DATATYPE_MAP.put(Float.class, XSD.FLOAT);
+		DATATYPE_MAP.put(Double.class, XSD.DOUBLE);
+		DATATYPE_MAP.put(Byte.class, XSD.BYTE);
+		DATATYPE_MAP.put(Long.class, XSD.LONG);
+		DATATYPE_MAP.put(Short.class, XSD.SHORT);
+		DATATYPE_MAP.put(BigDecimal.class, XSD.DECIMAL);
+		DATATYPE_MAP.put(java.net.URI.class, XSD.ANYURI);
+		DATATYPE_MAP.put(java.time.LocalDate.class, XSD.DATE);
 		
 		// custom datatypes
 		DATATYPE_MAP.put(Character.class, Java.CHAR);
@@ -67,42 +69,41 @@ public class DefaultDatatypeMapper implements DatatypeMapper {
 
 	public Object getJavaObject(Literal l) {
 		IRI dt = l.getDatatype();
-		if ((dt == null) || XMLSchema.STRING.equals(dt)) {
+		if ((dt == null) || XSD.STRING.equals(dt)) {
 			return l.stringValue();
 		} 
-		else if (XMLSchema.BOOLEAN.equals(dt)) {
+		else if (XSD.BOOLEAN.equals(dt)) {
 			return l.booleanValue();
 		} 
-		else if (XMLSchema.INT.equals(dt)) {
+		else if (XSD.INT.equals(dt)) {
 			return l.intValue(); //Integer.valueOf(l.intValue());
 		} 
-		else if (XMLSchema.BYTE.equals(dt)) {
+		else if (XSD.BYTE.equals(dt)) {
 			return l.byteValue(); //Byte.valueOf(l.byteValue());
 		} 
-		else if (XMLSchema.LONG.equals(dt)) {
+		else if (XSD.LONG.equals(dt)) {
 			return l.longValue();//Long.valueOf(l.longValue());
 		} 
-		else if (XMLSchema.SHORT.equals(dt)) {
+		else if (XSD.SHORT.equals(dt)) {
 			return l.shortValue(); //Short.valueOf(l.shortValue());
 		} 
-		else if (XMLSchema.FLOAT.equals(dt)) {
+		else if (XSD.FLOAT.equals(dt)) {
 			return l.floatValue(); //Float.valueOf(l.floatValue());
 		} 
-		else if (XMLSchema.DOUBLE.equals(dt)) {
+		else if (XSD.DOUBLE.equals(dt)) {
 			return l.doubleValue();//Double.valueOf(l.doubleValue());
 		} 
-		else if (XMLSchema.DECIMAL.equals(dt)) {
+		else if (XSD.DECIMAL.equals(dt)) {
 			return l.decimalValue();
 		}
-		else if (XMLSchema.ANYURI.equals(dt)) {
+		else if (XSD.ANYURI.equals(dt)) {
 			return java.net.URI.create(l.stringValue());
 		}
-		else if (XMLSchema.DATETIME.equals(dt)) {
+		else if (XSD.DATETIME.equals(dt)) {
 			return l.calendarValue().toGregorianCalendar().getTime();
 		} 
-		else if (XMLSchema.DATE.equals(dt)) {
-			// TODO: Confirm this works for LocalDate
-			return l.temporalAccessorValue();
+		else if (XSD.DATE.equals(dt)) {
+			return LocalDate.from(l.temporalAccessorValue());
 		} 
 		else if (Java.CHAR.equals(dt)) {
 			String s = l.stringValue();
@@ -118,7 +119,7 @@ public class DefaultDatatypeMapper implements DatatypeMapper {
 		}
 		IRI dtUri = getDatatypeURI(value.getClass());
 		if (dtUri != null) {
-			if (dtUri.equals(XMLSchema.STRING)) {
+			if (dtUri.equals(XSD.STRING)) {
 				return vf.createLiteral(value.toString());
 			}
 			return vf.createLiteral(value.toString(), dtUri);
