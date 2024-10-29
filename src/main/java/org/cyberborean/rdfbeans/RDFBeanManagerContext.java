@@ -238,57 +238,63 @@ public class RDFBeanManagerContext {
 	 *             If the class is not a valid RDFBean class
 	 * @throws RepositoryException
 	 */
-	public <T> CloseableIteration<T, Exception> getAll(final Class<T> rdfBeanClass)
+	public <T> CloseableIteration<T> getAll(final Class<T> rdfBeanClass)
 			throws RDFBeanException, RepositoryException {
+	//public <T> CloseableIteration<T, Exception> getAll(final Class<T> rdfBeanClass)
+	//		throws RDFBeanException, RepositoryException {
 		RDFBeanInfo rbi = RDFBeanInfo.get(rdfBeanClass);
 		IRI type = rbi.getRDFType();
 		if (type == null) {
-			return new CloseableIteration<T, Exception>() {
+			//return new CloseableIteration<T, Exception>() {
+			return new CloseableIteration<T>() {
 
 				@Override
-				public boolean hasNext() throws Exception {
+				public boolean hasNext() {
 					return false;
 				}
 
 				@Override
-				public T next() throws Exception {
+				public T next() {
 					return null;
 				}
 
 				@Override
-				public void remove() throws Exception {
+				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 
 				@Override
-				public void close() throws Exception {
+				public void close() {
 				}
 
 			};
 		}
 
-		final CloseableIteration<Statement, RepositoryException> sts = connectionPool.getConnection()
+		final CloseableIteration<Statement> sts = connectionPool.getConnection()
 				.getStatements(null, RDF.TYPE, type, false, (IRI)context);
+		//final CloseableIteration<Statement, RepositoryException> sts = connectionPool.getConnection()
+		//		.getStatements(null, RDF.TYPE, type, false, (IRI)context);
 
-		return new CloseableIteration<T, Exception>() {
+		//return new CloseableIteration<T, Exception>() {
+		return new CloseableIteration<T>() {
 
 			@Override
-			public boolean hasNext() throws Exception {
+			public boolean hasNext() {
 				return sts.hasNext();
 			}
 
 			@Override
-			public T next() throws Exception {
+			public T next() {
 				return _get(sts.next().getSubject(), rdfBeanClass);
 			}
 
 			@Override
-			public void remove() throws Exception {
+			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
 			@Override
-			public void close() throws Exception {
+			public void close() {
 				sts.close();
 			}
 		};

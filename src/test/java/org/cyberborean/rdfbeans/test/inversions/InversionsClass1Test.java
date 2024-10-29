@@ -291,7 +291,7 @@ public class InversionsClass1Test extends RDFBeansTestBase  {
     	manager.close();
     	manager = new RDFBeanManager(repo);
     	
-    	CloseableIteration<Child, Exception> childIter = manager.getAll(Child.class);
+    	CloseableIteration<Child> childIter = manager.getAll(Child.class);
     	while (childIter.hasNext()) {
     		Parent p = childIter.next().getParent();
     		assertNull(p);

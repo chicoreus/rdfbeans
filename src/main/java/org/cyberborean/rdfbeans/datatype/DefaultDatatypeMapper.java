@@ -45,6 +45,7 @@ public class DefaultDatatypeMapper implements DatatypeMapper {
 		DATATYPE_MAP.put(Short.class, XMLSchema.SHORT);
 		DATATYPE_MAP.put(BigDecimal.class, XMLSchema.DECIMAL);
 		DATATYPE_MAP.put(java.net.URI.class, XMLSchema.ANYURI);
+		DATATYPE_MAP.put(java.time.LocalDate.class, XMLSchema.DATE);
 		
 		// custom datatypes
 		DATATYPE_MAP.put(Character.class, Java.CHAR);
@@ -98,6 +99,10 @@ public class DefaultDatatypeMapper implements DatatypeMapper {
 		}
 		else if (XMLSchema.DATETIME.equals(dt)) {
 			return l.calendarValue().toGregorianCalendar().getTime();
+		} 
+		else if (XMLSchema.DATE.equals(dt)) {
+			// TODO: Confirm this works for LocalDate
+			return l.temporalAccessorValue();
 		} 
 		else if (Java.CHAR.equals(dt)) {
 			String s = l.stringValue();

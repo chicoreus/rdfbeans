@@ -185,7 +185,8 @@ public class RDFBeanDelegator implements InvocationHandler {
 	private Object getValue(RDFProperty p) throws RDFBeanException, RepositoryException, RDF4JException {
 		RepositoryConnection conn = getRepositoryConnection();
 		Object result = null;
-		CloseableIteration<Statement, ? extends RDF4JException> sts;
+		//CloseableIteration<Statement, ? extends RDF4JException> sts;
+		CloseableIteration<Statement> sts;
 		if (p.isInversionOfProperty()) {
 			sts = conn.getStatements(null, p.getUri(), subject, false, (IRI)context);
 			if (!sts.hasNext()) {

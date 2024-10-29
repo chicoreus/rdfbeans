@@ -89,7 +89,8 @@ public class Unmarshaller {
 			for (RDFProperty p : rbi.getProperties()) {
 				// Get values
 				IRI predicate = p.getUri();
-				CloseableIteration<Statement, ? extends RDF4JException> statements;
+				// CloseableIteration<Statement, ? extends RDF4JException> statements;
+				CloseableIteration<Statement> statements;
 				if (p.isInversionOfProperty()) {
 					statements = conn.getStatements(null, predicate, resource, false, (IRI)context);
 					if (!statements.hasNext()) {
@@ -254,7 +255,8 @@ public class Unmarshaller {
 	private Class<?> getBindingClass(RepositoryConnection conn, Resource r, Resource... contexts)
 			throws RDFBeanException, RepositoryException {
 		Class<?> cls = null;
-		try (CloseableIteration<Statement, RepositoryException> ts = conn.getStatements(r, RDF.TYPE, null, false, contexts)) {
+		//try (CloseableIteration<Statement, RepositoryException> ts = conn.getStatements(r, RDF.TYPE, null, false, contexts)) {
+		try (CloseableIteration<Statement> ts = conn.getStatements(r, RDF.TYPE, null, false, contexts)) {
 			while (cls == null && ts.hasNext()) {
 				Value type = ts.next().getObject();
 				if (type instanceof IRI) {

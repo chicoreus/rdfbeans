@@ -14,6 +14,7 @@ public class DateUtils {
 	static final SimpleDateFormat ISO8601DateFormat;
     static final SimpleDateFormat ISO8601DateFormat2; 
     static final SimpleDateFormat ISO8601DateFormat3; 
+    static final SimpleDateFormat ISO8601DateOnlyFormat;
     
     static final DateFormat[] dateformats;
     
@@ -31,10 +32,15 @@ public class DateUtils {
                     .getDateTimeInstance();
         	ISO8601DateFormat3.applyPattern("yyyy-MM-dd'T'HH:mmX");
         	
+        	ISO8601DateOnlyFormat = (SimpleDateFormat) DateFormat
+                    .getDateTimeInstance();
+        	ISO8601DateOnlyFormat.applyPattern("yyyy-MM-dd");
+        	
         	dateformats = new DateFormat[] {
         			ISO8601DateFormat, 
         			ISO8601DateFormat2, 
         			ISO8601DateFormat3, 
+        			ISO8601DateOnlyFormat,
         			DateFormat.getInstance(), 
         			DateFormat.getDateInstance()
         	};
