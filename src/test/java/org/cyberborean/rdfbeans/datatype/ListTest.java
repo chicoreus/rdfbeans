@@ -2,11 +2,12 @@ package org.cyberborean.rdfbeans.datatype;
 
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,8 +55,9 @@ public class ListTest {
         assertThat(data, notNullValue());
         List list = data.getListValue();
         assertThat(list, notNullValue());
-        assertThat(list.size(), is(3));
-        assertThat(list.get(0), is(URI.class));
+        assertEquals(list.size(), 3);
+        assertEquals(list.get(0).getClass(), URI.class);
+        //assertThat(list.get(0), is(URI.class));
         assertThat((URI) list.get(0), equalTo(new URI("http://example.com/list/first")));
         assertThat((URI) list.get(list.size()-1), equalTo(new URI("http://example.com/list/last")));
     }
@@ -71,7 +73,8 @@ public class ListTest {
         try {
             assertTrue("A list statement is generated", listStatement.hasNext());
             Value object = listStatement.next().getObject();
-            assertThat(object, is(Resource.class));
+            assertThat(object, instanceOf(Resource.class));
+            //assertThat(object, is(Resource.class));
             assertTrue("Empty List encodes as 'L rdf:rest rdf:nil'", checkConn.hasStatement(
                     (Resource)object, // the blank node of the list head
                     RDF.REST,

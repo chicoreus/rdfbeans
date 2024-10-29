@@ -322,8 +322,6 @@ public class RDFBeanManagerContext {
 	 * 
 	 * @param r
 	 *            Resource IRI or BNode
-	 * @param context
-	 *            RDF4J context
 	 * @return true, if the model contains the statements with the given
 	 *         resource subject and RDF type of that resource matches one
 	 *         specified in {@link RDFBean} annotation of the given class.
@@ -686,7 +684,7 @@ public class RDFBeanManagerContext {
 	 * 
 	 * @return the current ClassLoader instance
 	 * 
-	 * @see setClassLoader(ClassLoader)
+	 * see setClassLoader(ClassLoader)
 	 */
 	public ClassLoader getClassLoader() {
 		return unmarshaller.getClassLoader();
@@ -697,7 +695,7 @@ public class RDFBeanManagerContext {
 	 * 
 	 * @return the datatypeMapper
 	 * 
-	 * @see setDatatypeMapper(DatatypeMapper)
+	 * see setDatatypeMapper(DatatypeMapper)
 	 */
 	public DatatypeMapper getDatatypeMapper() {
 		return marshaller.getDatatypeMapper();

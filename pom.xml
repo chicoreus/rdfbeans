@@ -148,12 +148,12 @@
 					<version>3.10.1</version>
 					<configuration>
 						<failOnError>true</failOnError>
-						<doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+						<!-- doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
 						<docletArtifact>
 							<groupId>ch.raffael.pegdown-doclet</groupId>
 							<artifactId>pegdown-doclet</artifactId>
 							<version>1.3</version>
-						</docletArtifact>
+						</docletArtifact -->
 						<useStandardDocletOptions>true</useStandardDocletOptions>
 					</configuration>
 				</plugin>
